@@ -44,13 +44,15 @@ public class ContatoDao {
 	
 	public void adicionar(Contato contato) {
 		String sql = "insert into contatos " +
-				"(nome, telefone) " +
+				"(nome) " +
 				"values (?)";
+		
+		String sql2 = "insert into contatos " + "(telefone)" + "values(?)" ;
 
 		try {
 			PreparedStatement stmt = connection.prepareStatement(sql);
 			stmt.setString(1, contato.getNome());
-			stmt.setString(2, contato.getTelefone());
+			//stmt.setString(2, contato.getTelefone());
 
 
 			stmt.execute();
