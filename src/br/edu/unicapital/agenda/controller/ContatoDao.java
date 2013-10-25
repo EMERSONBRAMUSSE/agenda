@@ -58,21 +58,26 @@ public class ContatoDao {
 	}
 	
 	public void adicionar(Contato contato) {
-		String sql = "insert into contatos " + "(nome) " + "values (?)";
-		String sql2 = "insert into telefones " + "(telefone)" + "values(?)" ;
+		
+		
 
 		try {
+			String sql = "insert into contatos " + "(nome) " + "values (?)";
 			PreparedStatement stmt = connection.prepareStatement(sql);
 			stmt.setString(1, contato.getNome());
 			
 			stmt.execute();
 			stmt.close();
 			
+			String sql2= "insert into telefones " + "(telefone) " + "values (?)";
 			PreparedStatement stmt2 = connection.prepareStatement(sql2);
 			stmt2.setString(1, contato.getTelefone());
 			
 			stmt2.execute();
 			stmt2.close();
+			
+			
+			
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -84,15 +89,19 @@ public class ContatoDao {
 			PreparedStatement stmt = connection.prepareStatement("select * from contatos");
 			ResultSet rs = stmt.executeQuery();
 			PreparedStatement stmt2 = connection.prepareStatement("select * from telefones");
-			ResultSet rs2 = stmt.executeQuery();
+			ResultSet rs2 = stmt2.executeQuery();
 			while (rs.next() && rs2.next()) {
 				Contato contato = new Contato();
 
 				contato.setId(rs.getInt("id_contato"));
 				contato.setNome(rs.getString("nome"));
 				
+				
+				
+					
 				contato.setTelefone(rs2.getString("telefone"));
-
+				
+				
 				contatos.add(contato);
 			}
 			rs2.close();
