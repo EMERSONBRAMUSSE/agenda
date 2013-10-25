@@ -17,14 +17,22 @@ public class ContatoDao {
 	}
 
 	public void alterar(Contato contato) {
-		String sql = "update contatos set nome = ?, telefone = ? where id = ?";
+		String sql = "update contatos set nome = ?";
+		String sql2= "update telefones set telefone= ?";
 		try {
 			PreparedStatement stmt = connection.prepareStatement(sql);
 			stmt.setString(1, contato.getNome());
-			stmt.setString(2, contato.getTelefone());
-			stmt.setInt(3, contato.getId());
+			
 			stmt.execute();
 			stmt.close();
+			
+			PreparedStatement stmt2 = connection.prepareStatement(sql2);
+			stmt2.setString(1, contato.getTelefone());
+			
+			stmt2.execute();
+			stmt2.close();
+			
+			
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -32,31 +40,39 @@ public class ContatoDao {
 	
 	public void excluir(Contato contato) {
 		String sql = "delete from contatos where id = ?";
+		String sql2 = "delete from telefones where id = ?";
 		try {
 			PreparedStatement stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, contato.getId());
 			stmt.execute();
 			stmt.close();
+			
+			PreparedStatement stmt2 = connection.prepareStatement(sql2);
+			stmt2.setString(1, contato.getTelefone());
+			stmt2.execute();
+			stmt2.close();
+			
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
 	public void adicionar(Contato contato) {
-		String sql = "insert into contatos " +
-				"(nome) " +
-				"values (?)";
-		
-		String sql2 = "insert into contatos " + "(telefone)" + "values(?)" ;
+		String sql = "insert into contatos " + "(nome) " + "values (?)";
+		String sql2 = "insert into telefones " + "(telefone)" + "values(?)" ;
 
 		try {
 			PreparedStatement stmt = connection.prepareStatement(sql);
 			stmt.setString(1, contato.getNome());
-			//stmt.setString(2, contato.getTelefone());
-
-
+			
 			stmt.execute();
 			stmt.close();
+			
+			PreparedStatement stmt2 = connection.prepareStatement(sql2);
+			stmt2.setString(1, contato.getTelefone());
+			
+			stmt2.execute();
+			stmt2.close();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -67,15 +83,21 @@ public class ContatoDao {
 			List<Contato> contatos = new ArrayList<Contato>();
 			PreparedStatement stmt = connection.prepareStatement("select * from contatos");
 			ResultSet rs = stmt.executeQuery();
-			while (rs.next()) {
+			PreparedStatement stmt2 = connection.prepareStatement("select * from telefones");
+			ResultSet rs2 = stmt.executeQuery();
+			while (rs.next() && rs2.next()) {
 				Contato contato = new Contato();
 
-				contato.setId(rs.getInt("id"));
+				contato.setId(rs.getInt("id_contato"));
 				contato.setNome(rs.getString("nome"));
-				contato.setTelefone(rs.getString("telefone"));
+				
+				contato.setTelefone(rs2.getString("telefone"));
 
 				contatos.add(contato);
 			}
+			rs2.close();
+			stmt2.close();
+			
 			rs.close();
 			stmt.close();
 			return contatos;
