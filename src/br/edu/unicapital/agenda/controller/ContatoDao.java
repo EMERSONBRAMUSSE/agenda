@@ -11,78 +11,88 @@ import br.edu.unicapital.agenda.model.Contato;
 
 public class ContatoDao {
 	private Connection connection;
-	
+	private PreparedStatement stmt;
+	private PreparedStatement stmt2;
+	private String sql;
+	private String sql2;
+
 	public ContatoDao() {
 		this.connection = ConnectionFactory.getConnection();
 	}
 
 	public void alterar(Contato contato) {
-		String sql = "update contatos set nome = ?";
-		String sql2= "update telefones set telefone= ?";
+		sql = "update contatos set nome = ?";
+		sql2 = "update telefones set telefone= ?";
 		try {
-			PreparedStatement stmt = connection.prepareStatement(sql);
+			stmt = connection.prepareStatement(sql);
 			stmt.setString(1, contato.getNome());
-			
+
 			stmt.execute();
 			stmt.close();
-			
-			PreparedStatement stmt2 = connection.prepareStatement(sql2);
+
+			stmt2 = connection.prepareStatement(sql2);
 			stmt2.setString(1, contato.getTelefone());
-			
+
 			stmt2.execute();
 			stmt2.close();
-			
-			
+
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public void excluir(Contato contato) {
-		String sql = "delete from contatos where id = ?";
-		String sql2 = "delete from telefones where id = ?";
+		sql = "delete from contatos where id = ?";
+		sql2 = "delete from telefones where id = ? , ?";
 		try {
-			PreparedStatement stmt = connection.prepareStatement(sql);
+			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, contato.getId());
 			stmt.execute();
 			stmt.close();
-			
-			PreparedStatement stmt2 = connection.prepareStatement(sql2);
-			stmt2.setString(1, contato.getTelefone());
+
+			stmt2 = connection.prepareStatement(sql2);
+			stmt2.setInt(1, contato.getId());
+			stmt2.setString(2, contato.getTelefone());
 			stmt2.execute();
 			stmt2.close();
-			
+
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public void adicionar(Contato contato) {
-		
-		
 
 		try {
-			String sql = "insert into contatos " + "(nome) " + "values (?)";
-			PreparedStatement stmt = connection.prepareStatement(sql);
+			sql = "insert into contatos " + "(nome) " + "values (?)";
+			stmt = connection.prepareStatement(sql);
 			stmt.setString(1, contato.getNome());
-			
 			stmt.execute();
 			stmt.close();
 			
-			String sql2= "insert into telefones " + "(telefone) " + "values (?)";
-			PreparedStatement stmt2 = connection.prepareStatement(sql2);
-			stmt2.setString(1, contato.getTelefone());
+			PreparedStatement stmtq = connection.prepareStatement("select id_contato from contatos where nome = ?");
+			stmtq.setString(1, contato.getNome());
+			ResultSet rs = stmtq.executeQuery();
+			rs.next();
+			contato.setId(rs.getInt("id_contato"));
+			rs.close();
+			stmtq.close();
 			
+			sql2 = "insert into telefones " + "(id_contato, telefone) " + "values (? , ?)";
+			stmt2 = connection.prepareStatement(sql2);
+			stmt2.setInt(1, contato.getId());
+			stmt2.setString(2, contato.getTelefone());
 			stmt2.execute();
 			stmt2.close();
-			
-			
-			
+
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
+
+		
+
 	}
-	
+
 	public List<Contato> getListar() {
 		try {
 			List<Contato> contatos = new ArrayList<Contato>();
@@ -95,18 +105,14 @@ public class ContatoDao {
 
 				contato.setId(rs.getInt("id_contato"));
 				contato.setNome(rs.getString("nome"));
-				
-				
-				
-					
+
 				contato.setTelefone(rs2.getString("telefone"));
-				
-				
+
 				contatos.add(contato);
 			}
 			rs2.close();
 			stmt2.close();
-			
+
 			rs.close();
 			stmt.close();
 			return contatos;
