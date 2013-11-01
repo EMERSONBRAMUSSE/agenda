@@ -42,19 +42,19 @@ public class ContatoDao {
 	}
 
 	public void excluir(Contato contato) {
-		sql = "delete from contatos where id = ?";
-		sql2 = "delete from telefones where id = ? , ?";
+		
+		sql = "delete from contatos where id_contato = ?";
+		
 		try {
+			
+			
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, contato.getId());
+			
 			stmt.execute();
 			stmt.close();
 
-			stmt2 = connection.prepareStatement(sql2);
-			stmt2.setInt(1, contato.getId());
-			stmt2.setString(2, contato.getTelefone());
-			stmt2.execute();
-			stmt2.close();
+			
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
