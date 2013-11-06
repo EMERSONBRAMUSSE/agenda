@@ -3,40 +3,44 @@ package br.edu.unicapital.agenda.controller;
 import java.util.List;
 
 import br.edu.unicapital.agenda.model.Contato;
-import br.edu.unicapital.agenda.view.AgendaTela;
+
+import br.edu.unicapital.agenda.view.Agenda2013;
 
 public class Agenda {
 	List<Contato> contatos;
 	int crivo;
 	static ContatoDao contatoDao;
+	private static Agenda2013 tela;
 
 	public static void main(String[] args) {
 		Agenda agenda = new Agenda();
 		contatoDao = new ContatoDao();
 		agenda.contatos = contatoDao.getListar();
 		agenda.crivo = 0;
-		AgendaTela tela = new AgendaTela("Agenda", agenda);
+		tela = new Agenda2013("Agenda", agenda);
 	}
 
 	public Contato gravar(Contato c) {
 		for (Contato contato : contatos) {
 			if (contato.getId() == c.getId()) {
 				contato.setNome(c.getNome());
-				contato.setTelefone(c.getTelefone());
+				contato.setTelefone1(c.getTelefone1());
+				contato.setTelefone2(c.getTelefone2());
 				return contato;
 			}
 		}
 		contatoDao.adicionar(c);
 		contatos.add(c);
 		crivo = contatos.size();
-		return new Contato("" + contatos.size(), "", "");
+		return new Contato("" + contatos.size(), "", "" , "");
 
 	}
 
 	public Contato editar(Contato tela) {
 		Contato c = contatos.get(crivo);
 		c.setNome(tela.getNome());
-		c.setTelefone(tela.getTelefone());
+		c.setTelefone1(tela.getTelefone1());
+		c.setTelefone2(tela.getTelefone2());
 		contatoDao.alterar(c);
 		return c;
 	}
@@ -72,7 +76,7 @@ public class Agenda {
 	}
 
 	public Contato novo() {
-		Contato c = new Contato("" + (maiorContato() + 1), "", "");
+		Contato c = new Contato("" + (maiorContato() + 1), "", "" , "");
 		return c;
 	}
 
@@ -83,6 +87,9 @@ public class Agenda {
 	}
 
 	public Contato buscar(String nome) {
+		
+		
+		
 		for (Contato c : contatos) {
 			if (c.getNome().toLowerCase().contains(nome.toLowerCase()))
 				return c;

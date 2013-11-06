@@ -13,8 +13,10 @@ public class ContatoDao {
 	private Connection connection;
 	private PreparedStatement stmt;
 	private PreparedStatement stmt2;
+	private PreparedStatement stmt3;
 	private String sql;
 	private String sql2;
+	private String sql3;
 
 	public ContatoDao() {
 		this.connection = ConnectionFactory.getConnection();
@@ -23,18 +25,43 @@ public class ContatoDao {
 	public void alterar(Contato contato) {
 		sql = "update contatos set nome = ?";
 		sql2 = "update telefones set telefone= ?";
+		sql3 = "update telefones set telefone= ?";
 		try {
+			PreparedStatement stmt = connection.prepareStatement(sql);
 			stmt = connection.prepareStatement(sql);
 			stmt.setString(1, contato.getNome());
 
 			stmt.execute();
 			stmt.close();
+			
+			PreparedStatement stmtq = connection.prepareStatement("select id_contato from contatos where nome = ?");
+			stmtq.setString(1, contato.getNome());
+			ResultSet rs = stmtq.executeQuery();
+			rs.next();
+			contato.setId(rs.getInt("id_contato"));
+			rs.close();
+			stmtq.close();
 
+			PreparedStatement stmt2 = connection.prepareStatement(sql2);
 			stmt2 = connection.prepareStatement(sql2);
-			stmt2.setString(1, contato.getTelefone());
-
+			stmt2.setString(1, contato.getTelefone1());
 			stmt2.execute();
 			stmt2.close();
+			
+			PreparedStatement stmtq2 = connection.prepareStatement("select id_contato from contatos where nome = ?");
+			stmtq2.setString(1, contato.getNome());
+			ResultSet rs2 = stmtq2.executeQuery();
+			rs2.next();
+			contato.setId(rs2.getInt("id_contato"));
+			rs2.close();
+			stmtq2.close();
+			
+			PreparedStatement stmt3 = connection.prepareStatement(sql3);
+			stmt3 = connection.prepareStatement(sql3);
+			stmt3.setString(1, contato.getTelefone2());
+			stmt3.execute();
+			stmt3.close();
+
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -81,9 +108,24 @@ public class ContatoDao {
 			sql2 = "insert into telefones " + "(id_contato, telefone) " + "values (? , ?)";
 			stmt2 = connection.prepareStatement(sql2);
 			stmt2.setInt(1, contato.getId());
-			stmt2.setString(2, contato.getTelefone());
+			stmt2.setString(2, contato.getTelefone1());
 			stmt2.execute();
 			stmt2.close();
+			
+			PreparedStatement stmtq2 = connection.prepareStatement("select id_contato from contatos where nome = ?");
+			stmtq2.setString(1, contato.getNome());
+			ResultSet rs2 = stmtq2.executeQuery();
+			rs2.next();
+			contato.setId(rs2.getInt("id_contato"));
+			rs2.close();
+			stmtq2.close();
+			
+			sql3 = "insert into telefones " + "(id_contato, telefone) " + "values (? , ?)";
+			stmt3 = connection.prepareStatement(sql3);
+			stmt3.setInt(1, contato.getId());
+			stmt3.setString(2, contato.getTelefone2());
+			stmt3.execute();
+			stmt3.close();
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -106,7 +148,8 @@ public class ContatoDao {
 				contato.setId(rs.getInt("id_contato"));
 				contato.setNome(rs.getString("nome"));
 
-				contato.setTelefone(rs2.getString("telefone"));
+				contato.setTelefone1(rs2.getString("telefone"));
+				contato.setTelefone2(rs2.getString("telefone"));
 
 				contatos.add(contato);
 			}
