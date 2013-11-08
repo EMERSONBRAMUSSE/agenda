@@ -42,15 +42,14 @@ public class Agenda2013 extends JFrame implements ActionListener {
 
 	public Agenda2013(String titulo, Agenda controller) {
 		super(titulo);
+		setTitle("Agenda");
 		this.controller = controller;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 397, 426);
-		this.setVisible(true);
+		
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
 		JLabel idLb = new JLabel("ID");
@@ -64,6 +63,7 @@ public class Agenda2013 extends JFrame implements ActionListener {
 		idTf.setBounds(124, 157, 86, 20);
 		contentPane.add(idTf);
 		idTf.setColumns(10);
+		idTf.setEnabled(false);
 
 		JLabel nomeLb = new JLabel("NOME");
 		nomeLb.setBackground(new Color(0, 0, 255));
@@ -103,7 +103,7 @@ public class Agenda2013 extends JFrame implements ActionListener {
 				anterior();
 			}
 		});
-		anteriorBt.setIcon(new ImageIcon("C:\\Users\\EDILAINE\\Desktop\\preview.jpg"));
+		anteriorBt.setIcon(new ImageIcon(Agenda2013.class.getResource("/Imagens/preview.jpg")));
 		anteriorBt.setBounds(10, 326, 45, 51);
 		contentPane.add(anteriorBt);
 
@@ -114,7 +114,7 @@ public class Agenda2013 extends JFrame implements ActionListener {
 				proximo();
 			}
 		});
-		proximoBt.setIcon(new ImageIcon("C:\\Users\\EDILAINE\\Desktop\\preview - C\u00F3pia.jpg"));
+		proximoBt.setIcon(new ImageIcon(Agenda2013.class.getResource("/Imagens/preview - C\u00F3pia.jpg")));
 		proximoBt.setBounds(317, 326, 54, 51);
 		contentPane.add(proximoBt);
 
@@ -172,8 +172,16 @@ public class Agenda2013 extends JFrame implements ActionListener {
 		lmagenAgenda.setLabelFor(contentPane);
 		lmagenAgenda.setBounds(5, 0, 371, 388);
 		lmagenAgenda.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lmagenAgenda.setIcon(new ImageIcon("C:\\Users\\EDILAINE\\Desktop\\\u00CDndice.jpeg"));
+		lmagenAgenda.setIcon(new ImageIcon(Agenda2013.class.getResource("/Imagens/\u00CDndice.jpeg")));
 		contentPane.add(lmagenAgenda);
+		
+		
+		setContentPane(contentPane);
+		setResizable(false);//para nao estender a tela
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 385, 418);//tamanho da tela
+		setLocation(400, 180);//para tela abrir na localizacao que vc desejar
+		this.setVisible(true);//para a tela ao executar sempre seja visivel
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -200,16 +208,21 @@ public class Agenda2013 extends JFrame implements ActionListener {
 
 		if ((nomeTf.getText().trim().isEmpty())) {
 
-		} else if ((telefone1Tf.getText().trim().isEmpty())) {
-
 		} else if ((telefone2Tf.getText().trim().isEmpty())) {
 
 		} else {
 
 			Contato c = new Contato(idTf.getText(), nomeTf.getText(), telefone1Tf.getText(), telefone2Tf.getText());
 			desenhar(controller.gravar(c));
+			
+			idTf.setText("");
+			nomeTf.setText("");
+			telefone1Tf.setText("");
+			telefone2Tf.setText("");
 
 		}
+		
+		
 
 	}
 

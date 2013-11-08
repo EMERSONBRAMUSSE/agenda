@@ -2,8 +2,8 @@ package br.edu.unicapital.agenda.controller;
 
 import java.util.List;
 
-import br.edu.unicapital.agenda.model.Contato;
 
+import br.edu.unicapital.agenda.model.Contato;
 import br.edu.unicapital.agenda.view.Agenda2013;
 
 public class Agenda {
@@ -11,6 +11,7 @@ public class Agenda {
 	int crivo;
 	static ContatoDao contatoDao;
 	private static Agenda2013 tela;
+	boolean aux = true;
 
 	public static void main(String[] args) {
 		Agenda agenda = new Agenda();
@@ -57,14 +58,49 @@ public class Agenda {
 	}
 
 	public Contato proximo() {
-		crivo++;
-		if (contatos.isEmpty()) {
-			crivo = 0;
-			return new Contato();
+		
+		
+		
+		
+		if ((crivo == 0 && aux == true)) {
+
+			crivo = -1;
+			crivo++;
+			if (contatos.isEmpty()) {
+				crivo = 1;
+				return new Contato();
+			}
+			if (crivo >= contatos.size())
+				crivo = contatos.size() - 1;
+			aux = false;
+
+			return contatos.get(crivo);
+
+		} else {
+
+			crivo++;
+			if (contatos.isEmpty()) {
+				crivo = 1;
+				return new Contato();
+			}
+			if (crivo >= contatos.size())
+				crivo = contatos.size() - 1;
+			return contatos.get(crivo);
 		}
-		if (crivo >= contatos.size())
-			crivo = contatos.size() - 1;
-		return contatos.get(crivo);
+		
+		
+		//crivo++;
+		//if (contatos.isEmpty()) {
+		//	crivo = 0;
+			//return new Contato();
+		//}
+		//if (crivo >= contatos.size())
+			//crivo = contatos.size() - 1;
+		//return contatos.get(crivo);
+		
+		
+		
+		
 	}
 
 	public Contato apagar() {
